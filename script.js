@@ -1,5 +1,6 @@
-var headsCount = 0;
-var tailsCount = 0;
+var xp = 0;
+var xpNeededForLevelUp = 100;
+var level = 1;
 
 function flipCoin() {
   var coin = document.getElementById("coin");
@@ -25,18 +26,45 @@ function flipCoin() {
 
     // Update the counter
     if (result === "Heads") {
-      headsCount++;
-      headsCountElement.textContent = headsCount;
+      headsCountElement.textContent = parseInt(headsCountElement.textContent) + 1;
     } else {
-      tailsCount++;
-      tailsCountElement.textContent = tailsCount;
+      tailsCountElement.textContent = parseInt(tailsCountElement.textContent) + 1;
     }
+
+    // Update XP and check for level up
+    xp += 10; // Adjust the XP gain as needed
+    updateXPProgress();
+
   }, 1000);
 }
 
-function resetCounter() {
-  headsCount = 0;
-  tailsCount = 0;
-  document.getElementById("heads-count").textContent = headsCount;
-  document.getElementById("tails-count").textContent = tailsCount;
+function updateXPProgress() {
+  var xpProgress = (xp / xpNeededForLevelUp) * 100;
+  document.getElementById('xp-progress').style.width = xpProgress + '%';
+
+  if (xp >= xpNeededForLevelUp) {
+    levelUp();
+  }
 }
+
+function levelUp() {
+  level++;
+  xp = 0;
+  xpNeededForLevelUp *= 2; // Adjust the XP needed for the next level as needed
+
+  document.getElementById('level').textContent = level;
+  updateXPProgress();
+}
+
+function resetCounter() {
+  document.getElementById("heads-count").textContent = "0";
+  document.getElementById("tails-count").textContent = "0";
+
+  // Reset XP and level
+  xp = 0;
+  level = 1;
+  xpNeededForLevelUp = 100;
+  document.getElementById('level').textContent = level;
+  updateXPProgress();
+}
+
