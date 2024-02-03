@@ -1,10 +1,21 @@
-var xp = 0;
+var xp;
 var xpNeededForLevelUp = 100;
 var maxLevel = 9000; // Set the maximum level
-var level = 1;
+var level;
 
 var automationInterval;
 var flipsRemaining;
+
+// Load data from local storage or initialize if not present
+function initializeGameData() {
+  xp = parseInt(localStorage.getItem('xp')) || 0;
+  level = parseInt(localStorage.getItem('level')) || 1;
+}
+
+function saveGameData() {
+  localStorage.setItem('xp', xp);
+  localStorage.setItem('level', level);
+}
 
 function automateCoinFlip() {
   // Set the number of flips to be automated
@@ -56,6 +67,7 @@ function flipCoin() {
     // Update XP and check for level up
     xp += 10; // Adjust the XP gain as needed
     updateXPProgress();
+    saveGameData(); // Save game data to local storage
 
   }, 1000);
 }
@@ -100,7 +112,10 @@ function resetCounter() {
   xpNeededForLevelUp = 100;
   document.getElementById('level').textContent = level;
   updateXPProgress();
+  saveGameData(); // Save game data to local storage
 }
 
-// Start automation when the script is loaded
+// Initialize game data and start automation when the script is loaded
+initializeGameData();
 automateCoinFlip();
+
