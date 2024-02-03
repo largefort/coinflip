@@ -1,0 +1,77 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+  font-family: 'Arial', sans-serif;
+}
+
+.coin-container {
+  text-align: center;
+}
+
+.coin {
+  width: 100px;
+  height: 100px;
+  background-color: #e5e5e5;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  display: inline-block;
+  margin-bottom: 20px;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.5s ease-in-out;
+}
+
+.coin.heads {
+  transform: rotateY(360deg);
+  background-image: url('heads.png'); /* Replace 'heads.png' with the path to your heads image */
+}
+
+.coin.tails {
+  transform: rotateY(180deg);
+  background-image: url('tails.png'); /* Replace 'tails.png' with the path to your tails image */
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.counter-container {
+  margin-top: 20px;
+}
+
+.counter-container p {
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+#heads-count,
+#tails-count {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.history-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.history-container h2 {
+  font-size: 20px;
+}
+
+#history-list {
+  list-style: none;
+  padding: 0;
+}
+
+#history-list li {
+  font-size: 16px;
+  margin: 5px 0;
+  color: #555;
+}
