@@ -6,15 +6,54 @@ var level;
 var automationInterval;
 var flipsRemaining;
 
-// Load data from local storage or initialize if not present
-function initializeGameData() {
-  xp = parseInt(localStorage.getItem('xp')) || 0;
-  level = parseInt(localStorage.getItem('level')) || 1;
-}
+// Initialize IndexedDB
+var db;
+var request = indexedDB.open('coinFlipDB', 1);
+
+request.onupgradeneeded = function (event) {
+  db = event.target.result;
+  var objectStore = db.createObjectStore('gameData', { keyPath: 'id' });
+  objectStore.createIndex('xp', 'xp', { unique: false });
+  objectStore.createIndex('level', 'level', { unique: false });
+};
+
+request.onsuccess = function (event) {
+  db = event.target.result;
+  initializeGameData();
+  automateCoinFlip();
+};
 
 function saveGameData() {
-  localStorage.setItem('xp', xp);
-  localStorage.setItem('level', level);
+  var transaction = db.transaction(['gameData'], 'readwrite');
+  var objectStore = transaction.objectStore('gameData');
+
+  var data = { id: 1, xp: xp, level: level };
+  var request = objectStore.put(data);
+
+  request.onsuccess = function (event) {
+    console.log('Game data saved successfully!');
+  };
+
+  request.onerror = function (event) {
+    console.error('Error saving game data:', event.target.error);
+  };
+}
+
+function initializeGameData() {
+  var transaction = db.transaction(['gameData'], 'readonly');
+  var objectStore = transaction.objectStore('gameData');
+  var request = objectStore.get(1);
+
+  request.onsuccess = function (event) {
+    var data = event.target.result;
+    xp = data ? data.xp : 0;
+    level = data ? data.level : 1;
+    updateXPProgress(); // Update XP progress after initializing data
+  };
+
+  request.onerror = function (event) {
+    console.error('Error loading game data:', event.target.error);
+  };
 }
 
 function automateCoinFlip() {
@@ -67,7 +106,7 @@ function flipCoin() {
     // Update XP and check for level up
     xp += 10; // Adjust the XP gain as needed
     updateXPProgress();
-    saveGameData(); // Save game data to local storage
+    saveGameData(); // Save game data to IndexedDB
 
   }, 1000);
 }
@@ -112,10 +151,6 @@ function resetCounter() {
   xpNeededForLevelUp = 100;
   document.getElementById('level').textContent = level;
   updateXPProgress();
-  saveGameData(); // Save game data to local storage
+  saveGameData(); // Save game data to IndexedDB
 }
-
-// Initialize game data and start automation when the script is loaded
-initializeGameData();
-automateCoinFlip();
 
